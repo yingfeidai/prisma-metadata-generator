@@ -1,0 +1,1 @@
+# prisma-metadata-generator
