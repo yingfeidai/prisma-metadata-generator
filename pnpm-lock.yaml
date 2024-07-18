@@ -7,12 +7,28 @@ settings:
 importers:
 
   .:
-    devDependencies:
+    dependencies:
+      '@prisma/generator-helper':
+        specifier: ^5.17.0
+        version: 5.17.0
+      commander:
+        specifier: ^12.1.0
+        version: 12.1.0
       typescript:
         specifier: ^5.5.3
         version: 5.5.3
 
 packages:
+
+  '@prisma/debug@5.17.0':
+    resolution: {integrity: sha512-l7+AteR3P8FXiYyo496zkuoiJ5r9jLQEdUuxIxNCN1ud8rdbH3GTxm+f+dCyaSv9l9WY+29L9czaVRXz9mULfg==}
+
+  '@prisma/generator-helper@5.17.0':
+    resolution: {integrity: sha512-UcYpNjjQNVHAjIxgjfXnF4fcKU7B2vuzG1L27xIV81xQoGSbxg7v670URBhd0/ZoE8v2Itj2bbuyezY1ViHVaA==}
+
+  commander@12.1.0:
+    resolution: {integrity: sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==}
+    engines: {node: '>=18'}
 
   typescript@5.5.3:
     resolution: {integrity: sha512-/hreyEujaB0w76zKo6717l3L0o/qEUtRgdvUBvlkhoWeOVMjMuHNHk0BRBzikzuGDqNmPQbg5ifMEqsHLiIUcQ==}
@@ -20,5 +36,13 @@ packages:
     hasBin: true
 
 snapshots:
+
+  '@prisma/debug@5.17.0': {}
+
+  '@prisma/generator-helper@5.17.0':
+    dependencies:
+      '@prisma/debug': 5.17.0
+
+  commander@12.1.0: {}
 
   typescript@5.5.3: {}
