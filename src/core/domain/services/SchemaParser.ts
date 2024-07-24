@@ -17,12 +17,15 @@ export class SchemaParser {
         .map((line) => {
           const fieldMatch = line.match(/^(\w+)\s+(\w+)/);
           const mapMatch = line.match(mapPattern);
-          return fieldMatch
-            ? {
-                name: useMapping && mapMatch ? mapMatch[1] : fieldMatch[1],
-                type: fieldMatch[2],
-              }
-            : null;
+          if (fieldMatch) {
+            return {
+              name: useMapping && mapMatch ? mapMatch[1] : fieldMatch[1],
+              type: fieldMatch[2],
+            };
+          } else {
+            console.error(`Failed to parse field: ${line}`);
+            return null;
+          }
         })
         .filter(Boolean) as { name: string; type: string }[];
 
