@@ -47,7 +47,6 @@ const formatFileName = (name: string, style: string): string => {
   switch (style) {
     case "kebab-case":
       return name.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
-    case "camelCase":
     default:
       return name;
   }
