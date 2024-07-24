@@ -8,7 +8,10 @@ export class SchemaParser {
     const mappings: Record<string, { name: string; type: string }[]> = {};
 
     let match;
-    while ((match = tablePattern.exec(schema)) !== null) {
+    match = tablePattern.exec(schema);
+    while (match !== null) {
+      // existing code
+      match = tablePattern.exec(schema);
       const tableName = match[1];
       const fields = match[2]
         .split("\n")
