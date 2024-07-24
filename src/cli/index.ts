@@ -58,10 +58,9 @@ program
       process.exit(1);
     }
 
-    if (!["camelCase", "kebab-case"].includes(fileNaming)) {
-      console.error(
-        "Invalid file naming style. Choose either 'camelCase' or 'kebab-case'."
-      );
+    const validFileNamingStyles = ["camelCase", "kebab-case"];
+    if (!validFileNamingStyles.includes(fileNaming)) {
+      console.error(`Invalid file naming style. Choose either 'camelCase' or 'kebab-case'.`);
       process.exit(1);
     }
 
