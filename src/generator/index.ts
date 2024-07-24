@@ -5,7 +5,7 @@ generatorHandler({
   onManifest() {
     return {
       defaultOutput: "./generated",
-      prettyName: "Prisma Fields and Enums Generator",
+      prettyName: "Prisma Fields, Enums, DTOs, and Entities Generator",
     };
   },
   async onGenerate(options: GeneratorOptions) {
@@ -15,21 +15,58 @@ generatorHandler({
     const fileNaming = Array.isArray(options.generator.config.fileNaming)
       ? options.generator.config.fileNaming[0]
       : options.generator.config.fileNaming || "camelCase";
-    const prefix = Array.isArray(options.generator.config.prefix)
-      ? options.generator.config.prefix[0]
-      : options.generator.config.prefix || "";
+    const prefixes = {
+      dto: Array.isArray(options.generator.config.dtoPrefix)
+        ? options.generator.config.dtoPrefix[0]
+        : options.generator.config.dtoPrefix || "",
+      entity: Array.isArray(options.generator.config.entityPrefix)
+        ? options.generator.config.entityPrefix[0]
+        : options.generator.config.entityPrefix || "",
+      fieldEnum: Array.isArray(options.generator.config.fieldEnumPrefix)
+        ? options.generator.config.fieldEnumPrefix[0]
+        : options.generator.config.fieldEnumPrefix || "",
+    };
+    const suffixes = {
+      dto: Array.isArray(options.generator.config.dtoSuffix)
+        ? options.generator.config.dtoSuffix[0]
+        : options.generator.config.dtoSuffix || "Dto",
+      entity: Array.isArray(options.generator.config.entitySuffix)
+        ? options.generator.config.entitySuffix[0]
+        : options.generator.config.entitySuffix || "Entity",
+      fieldEnum: Array.isArray(options.generator.config.fieldEnumSuffix)
+        ? options.generator.config.fieldEnumSuffix[0]
+        : options.generator.config.fieldEnumSuffix || "Fields",
+    };
+    const outputDirs = {
+      dto: Array.isArray(options.generator.config.dtoOutput)
+        ? options.generator.config.dtoOutput[0]
+        : options.generator.config.dtoOutput,
+      entity: Array.isArray(options.generator.config.entityOutput)
+        ? options.generator.config.entityOutput[0]
+        : options.generator.config.entityOutput,
+      fieldEnum: Array.isArray(options.generator.config.fieldEnumOutput)
+        ? options.generator.config.fieldEnumOutput[0]
+        : options.generator.config.fieldEnumOutput,
+    };
+    const dtoAsClass = options.generator.config.dtoAsClass !== "false";
+    const entityAsClass = options.generator.config.entityAsClass !== "false";
 
     const schema = options.datamodel;
     if (typeof schema !== "string") {
       throw new Error("Expected schema to be a string");
     }
+
     generateSchemaDefinitions(
       schema,
       outputDir,
       useConst,
       useMapping,
       fileNaming,
-      prefix
+      prefixes,
+      suffixes,
+      outputDirs,
+      dtoAsClass,
+      entityAsClass
     );
   },
 });

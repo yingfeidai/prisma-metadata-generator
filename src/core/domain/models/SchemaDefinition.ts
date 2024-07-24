@@ -1,4 +1,4 @@
-export interface SchemaDefinition {
+export type SchemaDefinition = {
   tables: string[];
-  mappings: Record<string, string[]>;
-}
+  mappings: Record<string, { name: string; type: string }[]>;
+};

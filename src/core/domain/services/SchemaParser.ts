@@ -5,7 +5,7 @@ export class SchemaParser {
     const tablePattern = /model\s+(\w+)\s+{([^}]+)}/g;
     const mapPattern = /@map\("([^"]+)"\)/;
     const tables: string[] = [];
-    const mappings: Record<string, string[]> = {};
+    const mappings: Record<string, { name: string; type: string }[]> = {};
 
     let match;
     while ((match = tablePattern.exec(schema)) !== null) {
@@ -15,15 +15,16 @@ export class SchemaParser {
         .map((line) => line.trim())
         .filter((line) => line && !line.startsWith("//"))
         .map((line) => {
-          const fieldMatch = line.match(/^(\w+)\s+\w+/);
+          const fieldMatch = line.match(/^(\w+)\s+(\w+)/);
           const mapMatch = line.match(mapPattern);
-          return useMapping && mapMatch
-            ? mapMatch[1]
-            : fieldMatch
-            ? fieldMatch[1]
+          return fieldMatch
+            ? {
+                name: useMapping && mapMatch ? mapMatch[1] : fieldMatch[1],
+                type: fieldMatch[2],
+              }
             : null;
         })
-        .filter(Boolean) as string[];
+        .filter(Boolean) as { name: string; type: string }[];
 
       tables.push(tableName);
       mappings[tableName] = fields;

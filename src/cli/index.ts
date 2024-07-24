@@ -18,11 +18,21 @@ program
     "File naming style: camelCase, kebab-case",
     "camelCase"
   )
+  .option("--dto-output <path>", "Output directory for DTO files")
+  .option("--entity-output <path>", "Output directory for entity files")
+  .option("--field-enum-output <path>", "Output directory for field enum files")
+  .option("--dto-prefix <prefix>", "Prefix for DTO class names", "")
+  .option("--entity-prefix <prefix>", "Prefix for entity class names", "")
+  .option("--field-enum-prefix <prefix>", "Prefix for field enum names", "")
+  .option("--dto-suffix <suffix>", "Suffix for DTO class names", "Dto")
+  .option("--entity-suffix <suffix>", "Suffix for entity class names", "Entity")
   .option(
-    "-p, --prefix <prefix>",
-    "Prefix for the overall table enum file name",
-    ""
+    "--field-enum-suffix <suffix>",
+    "Suffix for field enum names",
+    "Fields"
   )
+  .option("--dto-as-class", "Generate DTOs as classes", true)
+  .option("--entity-as-class", "Generate entities as classes", true)
   .action((options) => {
     const {
       schema,
@@ -30,7 +40,17 @@ program
       const: useConst,
       useMapping,
       fileNaming,
-      prefix,
+      dtoOutput,
+      entityOutput,
+      fieldEnumOutput,
+      dtoPrefix,
+      entityPrefix,
+      fieldEnumPrefix,
+      dtoSuffix,
+      entitySuffix,
+      fieldEnumSuffix,
+      dtoAsClass,
+      entityAsClass,
     } = options;
 
     if (!schema) {
@@ -52,7 +72,11 @@ program
       useConst,
       useMapping,
       fileNaming,
-      prefix
+      { dto: dtoPrefix, entity: entityPrefix, fieldEnum: fieldEnumPrefix },
+      { dto: dtoSuffix, entity: entitySuffix, fieldEnum: fieldEnumSuffix },
+      { dto: dtoOutput, entity: entityOutput, fieldEnum: fieldEnumOutput },
+      dtoAsClass,
+      entityAsClass
     );
   });
 

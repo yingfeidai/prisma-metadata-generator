@@ -9,24 +9,16 @@ export const generateEnumFile = (
   outputPath: string,
   prefix: string
 ): void => {
-  const fieldDefinitions = fields
-    .map((field) => `${field.toUpperCase()}: "${field}"`)
-    .join(",\n  ");
-  const constName = `${prefix}${tableName[0].toUpperCase()}${tableName
-    .slice(1)
-    .toLowerCase()}Fields`;
-  const typeName = `${prefix}${tableName[0].toUpperCase()}${tableName.slice(
+  const enumName = `${prefix}${tableName[0].toUpperCase()}${tableName.slice(
     1
   )}Fields`;
   const enumContent = useConst
-    ? `export const ${constName[0].toLowerCase()}${constName.slice(
-        1
-      )} = {\n  ${fieldDefinitions}\n} as const;\n\nexport type ${typeName} = keyof typeof ${constName[0].toLowerCase()}${constName.slice(
-        1
-      )};`
-    : `export enum ${typeName} {\n  ${fieldDefinitions
-        .replace(/: "/g, ' = "')
-        .replace(/"/g, '",')}\n}`;
+    ? `export const ${enumName} = {\n  ${fields
+        .map((field) => `${field}: "${field}",`)
+        .join("\n  ")}\n} as const;`
+    : `export enum ${enumName} {\n  ${fields
+        .map((field) => `${field} = "${field}",`)
+        .join("\n  ")}\n}`;
 
   writeFileSync(outputPath, enumContent);
 };
@@ -61,34 +53,129 @@ const formatFileName = (name: string, style: string): string => {
   }
 };
 
+export const generateDtoFile = (
+  tableName: string,
+  fields: { name: string; type: string }[],
+  outputPath: string,
+  prefix: string,
+  suffix: string,
+  asClass: boolean
+): void => {
+  const className = `${prefix}${tableName[0].toUpperCase()}${tableName
+    .slice(1)
+    .toLowerCase()}${suffix}`;
+  const dtoContent = asClass
+    ? `export class ${className} {\n  ${fields
+        .map((field) => `${field.name}!: ${field.type};`)
+        .join("\n  ")}\n}`
+    : `export const ${className[0].toLowerCase()}${className.slice(
+        1
+      )} = {\n  ${fields
+        .map((field) => `${field.name}: undefined as ${field.type},`)
+        .join("\n  ")}\n} as const;`;
+
+  writeFileSync(outputPath, dtoContent);
+};
+
+export const generateEntityFile = (
+  tableName: string,
+  fields: { name: string; type: string }[],
+  outputPath: string,
+  prefix: string,
+  suffix: string,
+  asClass: boolean
+): void => {
+  const className = `${prefix}${tableName[0].toUpperCase()}${tableName
+    .slice(1)
+    .toLowerCase()}${suffix}`;
+  const entityContent = asClass
+    ? `export class ${className} {\n  ${fields
+        .map((field) => `${field.name}!: ${field.type};`)
+        .join("\n  ")}\n}`
+    : `export const ${className[0].toLowerCase()}${className.slice(
+        1
+      )} = {\n  ${fields
+        .map((field) => `${field.name}: undefined as ${field.type},`)
+        .join("\n  ")}\n} as const;`;
+
+  writeFileSync(outputPath, entityContent);
+};
+
 export const generateSchemaDefinitions = (
   schema: string,
   outputDir: string,
   useConst: boolean,
   useMapping: boolean,
   fileNaming: string,
-  prefix: string
+  prefixes: { dto: string; entity: string; fieldEnum: string },
+  suffixes: { dto: string; entity: string; fieldEnum: string },
+  outputDirs: { dto?: string; entity?: string; fieldEnum?: string },
+  dtoAsClass: boolean,
+  entityAsClass: boolean
 ): void => {
   const parser = new SchemaParser();
   const { tables, mappings } = parser.parse(schema, useMapping);
 
   tables.forEach((table) => {
     const fields = mappings[table] || [];
-    const fileName = formatFileName(`${prefix}${table}`, fileNaming);
+    const fieldNames = fields.map((field) => field.name);
+    const fileName = formatFileName(
+      `${prefixes.fieldEnum}${table}${suffixes.fieldEnum}`,
+      fileNaming
+    );
+    const dtoFileName = formatFileName(
+      `${prefixes.dto}${table}${suffixes.dto}`,
+      fileNaming
+    );
+    const entityFileName = formatFileName(
+      `${prefixes.entity}${table}${suffixes.entity}`,
+      fileNaming
+    );
+
     generateEnumFile(
       table,
-      fields,
+      fieldNames,
       useConst,
-      join(outputDir, `${fileName}.ts`),
-      prefix
+      join(
+        outputDirs.fieldEnum ?? join(outputDir, "field-enum"),
+        `${fileName}.ts`
+      ),
+      prefixes.fieldEnum
+    );
+
+    generateDtoFile(
+      table,
+      fields,
+      join(outputDirs.dto ?? join(outputDir, "dto"), `${dtoFileName}.ts`),
+      prefixes.dto,
+      suffixes.dto,
+      dtoAsClass
+    );
+
+    generateEntityFile(
+      table,
+      fields,
+      join(
+        outputDirs.entity ?? join(outputDir, "entity"),
+        `${entityFileName}.ts`
+      ),
+      prefixes.entity,
+      suffixes.entity,
+      entityAsClass
     );
   });
 
-  const allTablesFileName = formatFileName(`${prefix}Tables`, fileNaming);
+  const allTablesFileName = formatFileName(
+    `${prefixes.fieldEnum}Tables`,
+    fileNaming
+  );
   generateAllTablesFile(
     tables,
     useConst,
-    join(outputDir, `${allTablesFileName}.ts`),
-    prefix
+    join(
+      outputDirs.fieldEnum ?? join(outputDir, "field-enum"),
+      `${allTablesFileName}.ts`
+    ),
+    prefixes.fieldEnum
   );
 };
