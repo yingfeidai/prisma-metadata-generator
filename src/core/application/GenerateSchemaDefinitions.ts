@@ -113,69 +113,73 @@ export const generateSchemaDefinitions = (
   dtoAsClass: boolean,
   entityAsClass: boolean
 ): void => {
-  const parser = new SchemaParser();
-  const { tables, mappings } = parser.parse(schema, useMapping);
+  try {
+    const parser = new SchemaParser();
+    const { tables, mappings } = parser.parse(schema, useMapping);
 
-  tables.forEach((table) => {
-    const fields = mappings[table] || [];
-    const fieldNames = fields.map((field) => field.name);
-    const fileName = formatFileName(
-      `${prefixes.fieldEnum}${table}${suffixes.fieldEnum}`,
-      fileNaming
-    );
-    const dtoFileName = formatFileName(
-      `${prefixes.dto}${table}${suffixes.dto}`,
-      fileNaming
-    );
-    const entityFileName = formatFileName(
-      `${prefixes.entity}${table}${suffixes.entity}`,
-      fileNaming
-    );
+    tables.forEach((table) => {
+      const fields = mappings[table] || [];
+      const fieldNames = fields.map((field) => field.name);
+      const fileName = formatFileName(
+        `${prefixes.fieldEnum}${table}${suffixes.fieldEnum}`,
+        fileNaming
+      );
+      const dtoFileName = formatFileName(
+        `${prefixes.dto}${table}${suffixes.dto}`,
+        fileNaming
+      );
+      const entityFileName = formatFileName(
+        `${prefixes.entity}${table}${suffixes.entity}`,
+        fileNaming
+      );
 
-    generateEnumFile(
-      table,
-      fieldNames,
+      generateEnumFile(
+        table,
+        fieldNames,
+        useConst,
+        join(
+          outputDirs.fieldEnum ?? join(outputDir, "field-enum"),
+          `${fileName}.ts`
+        ),
+        prefixes.fieldEnum
+      );
+
+      generateDtoFile(
+        table,
+        fields,
+        join(outputDirs.dto ?? join(outputDir, "dto"), `${dtoFileName}.ts`),
+        prefixes.dto,
+        suffixes.dto,
+        dtoAsClass
+      );
+
+      generateEntityFile(
+        table,
+        fields,
+        join(
+          outputDirs.entity ?? join(outputDir, "entity"),
+          `${entityFileName}.ts`
+        ),
+        prefixes.entity,
+        suffixes.entity,
+        entityAsClass
+      );
+    });
+
+    const allTablesFileName = formatFileName(
+      `${prefixes.fieldEnum}Tables`,
+      fileNaming
+    );
+    generateAllTablesFile(
+      tables,
       useConst,
       join(
         outputDirs.fieldEnum ?? join(outputDir, "field-enum"),
-        `${fileName}.ts`
+        `${allTablesFileName}.ts`
       ),
       prefixes.fieldEnum
     );
-
-    generateDtoFile(
-      table,
-      fields,
-      join(outputDirs.dto ?? join(outputDir, "dto"), `${dtoFileName}.ts`),
-      prefixes.dto,
-      suffixes.dto,
-      dtoAsClass
-    );
-
-    generateEntityFile(
-      table,
-      fields,
-      join(
-        outputDirs.entity ?? join(outputDir, "entity"),
-        `${entityFileName}.ts`
-      ),
-      prefixes.entity,
-      suffixes.entity,
-      entityAsClass
-    );
-  });
-
-  const allTablesFileName = formatFileName(
-    `${prefixes.fieldEnum}Tables`,
-    fileNaming
-  );
-  generateAllTablesFile(
-    tables,
-    useConst,
-    join(
-      outputDirs.fieldEnum ?? join(outputDir, "field-enum"),
-      `${allTablesFileName}.ts`
-    ),
-    prefixes.fieldEnum
-  );
+  } catch (error) {
+    console.error("Error generating schema definitions:", error);
+  }
 };
