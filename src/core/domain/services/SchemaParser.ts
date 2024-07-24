@@ -1,7 +1,7 @@
 import { SchemaDefinition } from "../models/SchemaDefinition";
 
 export class SchemaParser {
-  parse = (schema: string, useMapping: boolean): SchemaDefinition => {
+  parse(schema: string, useMapping: boolean): SchemaDefinition {
     const tablePattern = /model\s+(\w+)\s+{([^}]+)}/g;
     const mapPattern = /@map\("([^"]+)"\)/;
     const tables: string[] = [];
