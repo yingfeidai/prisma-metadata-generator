@@ -59,22 +59,21 @@ You can configure the generator both through your schema.prisma file and via the
 
 ### CLI Options
 
-- `-s, --schema <path>`: Path to your Prisma schema file.
-- `-o, --output <path>`: Output directory for generated files. Default is ./generated.
-- `-c, --const`: Use const for enum definitions.
-- `--use-mapping`: Use @map and @@map annotations for field names.
-- `-dto-prefix <prefix>`: Prefix for DTO files.
-- `--entity-prefix <prefix>`: Prefix for Entity files.
-- `--field-enum-prefix <prefix>`: Prefix for Field Enum files.
-- `--dto-suffix <suffix>`: Suffix for DTO files.
-- `--entity-suffix <suffix>`: Suffix for Entity files.
-- `--field-enum-suffix <suffix>`: Suffix for Field Enum files.
-- `--dto-output <path>`: Output directory for DTO files.
-- `--entity-output <path>`: Output directory for Entity files.
-- `--field-enum-output <path>`: Output directory for Field Enum files.
-- `--dto-as-class <true|false>`饿: Generate DTOs as classes or const objects. Default is true.
-- `--entity-as-class <true|false>`: Generate Entities as classes or const objects. Default is true.
-
+- `-s, --schema <path>`: Path to your Prisma schema file
+- `-o, --output <path>`: Output directory for generated files. Default is ./generated
+- `-c, --const`: Use const for enum definitions
+- `--use-mapping`: Use @map and @@map annotations for field names
+- `-dto-prefix <prefix>`: Prefix for DTO files
+- `--entity-prefix <prefix>`: Prefix for Entity files
+- `--field-enum-prefix <prefix>`: Prefix for Field Enum files
+- `--dto-suffix <suffix>`: Suffix for DTO files
+- `--entity-suffix <suffix>`: Suffix for Entity files
+- `--field-enum-suffix <suffix>`: Suffix for Field Enum files
+- `--dto-output <path>`: Output directory for DTO files
+- `--entity-output <path>`: Output directory for Entity files
+- `--field-enum-output <path>`: Output directory for Field Enum files
+- `--dto-as-class <true|false>`: Generate DTOs as classes or const objects. Default is true
+- `--entity-as-class <true|false>`: Generate Entities as classes or const objects. Default is true
 #### Examples
 
 ##### Generate enum files from a Prisma schema:
