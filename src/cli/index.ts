@@ -33,7 +33,24 @@ program
   )
   .option("--dto-as-class", "Generate DTOs as classes", true)
   .option("--entity-as-class", "Generate entities as classes", true)
-  .action((options) => {
+  .action((options: {
+    schema: string;
+    output: string;
+    const: boolean;
+    useMapping: boolean;
+    fileNaming: string;
+    dtoOutput?: string;
+    entityOutput?: string;
+    fieldEnumOutput?: string;
+    dtoPrefix: string;
+    entityPrefix: string;
+    fieldEnumPrefix: string;
+    dtoSuffix: string;
+    entitySuffix: string;
+    fieldEnumSuffix: string;
+    dtoAsClass: boolean;
+    entityAsClass: boolean;
+  }) => {
     const {
       schema,
       output,
