@@ -36,6 +36,9 @@ export class SchemaParser {
       mappings[tableName] = fields;
     }
 
+    if (tables.length === 0 || Object.keys(mappings).length === 0) {
+      throw new Error("Invalid schema: No tables or mappings found.");
+    }
     return { tables, mappings };
   };
 }
