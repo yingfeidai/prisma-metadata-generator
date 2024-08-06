@@ -20,7 +20,11 @@ export const generateEnumFile = (
         .map((field) => `${field} = "${field}",`)
         .join("\n  ")}\n}`;
 
-  writeFileSync(outputPath, enumContent);
+  try {
+    writeFileSync(outputPath, enumContent);
+  } catch (error) {
+    console.error(`Failed to write enum file: ${error.message}`);
+  }
 };
 
 export const generateAllTablesFile = (
