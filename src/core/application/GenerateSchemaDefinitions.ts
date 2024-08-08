@@ -98,7 +98,11 @@ export const generateEntityFile = (
         .map((field) => `${field.name}: undefined as ${field.type},`)
         .join("\n  ")}\n} as const;`;
 
-  writeFileSync(outputPath, entityContent);
+  try {
+    writeFileSync(outputPath, entityContent);
+  } catch (error) {
+    console.error(`Failed to write entity file: ${error.message}`);
+  }
 };
 
 export const generateSchemaDefinitions = (
