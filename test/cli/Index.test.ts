@@ -96,6 +96,47 @@ describe("CLI", () => {
       );
     });
 
+  // Add tests for missing required options
+  it("should handle missing schema option", () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    process.exit = jest.fn() as any;
+
+    program.parse(["node", "test"]);
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Please provide the path to the Prisma schema file."
+    );
+    expect(process.exit).toHaveBeenCalledWith(1);
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  // Add tests for invalid option values
+  it("should handle invalid file naming style", () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    process.exit = jest.fn() as any;
+
+    program.parse([
+      "node",
+      "test",
+      "-s",
+      "./schema.prisma",
+      "-f",
+      "invalidCase",
+    ]);
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Invalid file naming style. Choose either 'camelCase' or 'kebab-case'."
+    );
+    expect(process.exit).toHaveBeenCalledWith(1);
+
+    consoleErrorSpy.mockRestore();
+  });
+});
   it("should call generateSchemaDefinitions with correct arguments", () => {
     const mockSchemaPath = "./schema.prisma";
     const mockSchemaContent = "mock schema content";
