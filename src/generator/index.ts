@@ -9,12 +9,20 @@ generatorHandler({
     };
   },
   async onGenerate(options: GeneratorOptions) {
+    if (!options.generator.output) {
+      throw new Error("Output directory is not specified.");
+    }
+
     const outputDir = options.generator.output?.value ?? "./generated";
     const useConst = options.generator.config.useConst === "true";
     const useMapping = options.generator.config.useMapping === "true";
     const fileNaming = Array.isArray(options.generator.config.fileNaming)
       ? options.generator.config.fileNaming[0]
       : options.generator.config.fileNaming || "camelCase";
+    if (!["camelCase", "kebab-case"].includes(fileNaming)) {
+      throw new Error("Invalid file naming style. Choose either 'camelCase' or 'kebab-case'.");
+    }
+
     const prefixes = {
       dto: Array.isArray(options.generator.config.dtoPrefix)
         ? options.generator.config.dtoPrefix[0]
