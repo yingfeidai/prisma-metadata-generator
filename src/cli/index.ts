@@ -51,6 +51,24 @@ program
     dtoAsClass: boolean;
     entityAsClass: boolean;
   }) => {
+  .action((options: {
+    schema: string;
+    output: string;
+    const: boolean;
+    useMapping: boolean;
+    fileNaming: string;
+    dtoOutput?: string;
+    entityOutput?: string;
+    fieldEnumOutput?: string;
+    dtoPrefix: string;
+    entityPrefix: string;
+    fieldEnumPrefix: string;
+    dtoSuffix: string;
+    entitySuffix: string;
+    fieldEnumSuffix: string;
+    dtoAsClass: boolean;
+    entityAsClass: boolean;
+  }) => {
     const {
       schema,
       output,
