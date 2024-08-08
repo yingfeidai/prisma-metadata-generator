@@ -27,12 +27,6 @@ export const generateEnumFile = (
   }
 };
 
-export const generateAllTablesFile = (
-  tables: string[],
-  useConst: boolean,
-  outputPath: string,
-  prefix: string
-): void => {
   const tableDefinitions = tables
     .map((table) => `${table.toUpperCase()}: "${table}"`)
     .join(",\n  ");
@@ -44,8 +38,11 @@ export const generateAllTablesFile = (
         .replace(/: "/g, ' = "')
         .replace(/"/g, '",')}\n}`;
 
-  writeFileSync(outputPath, tablesContent);
-};
+  try {
+    writeFileSync(outputPath, tablesContent);
+  } catch (error) {
+    console.error(`Failed to write all tables file: ${error.message}`);
+  }
 
 const formatFileName = (name: string, style: string): string => {
   switch (style) {
