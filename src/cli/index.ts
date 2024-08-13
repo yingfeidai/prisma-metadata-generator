@@ -2,10 +2,29 @@ import { Command } from "commander";
 import { readFileSync } from "fs";
 import { generateSchemaDefinitions } from "../core/application/GenerateSchemaDefinitions";
 
+export interface CLIOptions {
+  schema: string;
+  output: string;
+  const: boolean;
+  mapping: boolean;
+  fileNaming: string;
+  prefixDto: string;
+  suffixDto: string;
+  prefixEntity: string;
+  suffixEntity: string;
+  prefixFieldEnum: string;
+  suffixFieldEnum: string;
+  dtoDir?: string;
+  entityDir?: string;
+  fieldEnumDir?: string;
+  dtoAsClass: boolean;
+  entityAsClass: boolean;
+}
+
 const program = new Command();
 
 program
-  .option("-s, --schema <path>", "Path to Prisma schema file")
+  .requiredOption("-s, --schema <path>", "Path to Prisma schema file")
   .option("-o, --output <path>", "Output directory", "./generated")
   .option("-c, --const", "Use const enums instead of regular enums", false)
   .option("-m, --mapping", "Use field mapping annotations", false)
@@ -35,12 +54,7 @@ program
   )
   .parse(process.argv);
 
-const options = program.opts();
-
-if (!options.schema) {
-  console.error("Schema file path is required.");
-  process.exit(1);
-}
+const options: CLIOptions = program.opts<CLIOptions>();
 
 const schemaContent = readFileSync(options.schema, "utf-8");
 
