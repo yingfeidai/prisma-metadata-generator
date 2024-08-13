@@ -16,16 +16,12 @@ describe("CLI Integration Tests", () => {
   };
 
   beforeEach(() => {
-    if (existsSync(OUTPUT_DIR)) {
-      rmSync(OUTPUT_DIR, { recursive: true, force: true });
-    }
+    rmSync(OUTPUT_DIR, { recursive: true, force: true });
     mkdirSync(OUTPUT_DIR, { recursive: true });
   });
 
   afterAll(() => {
-    if (existsSync(OUTPUT_DIR)) {
-      rmSync(OUTPUT_DIR, { recursive: true, force: true });
-    }
+    rmSync(OUTPUT_DIR, { recursive: true, force: true });
   });
 
   it("should generate schema definitions using the CLI", () => {

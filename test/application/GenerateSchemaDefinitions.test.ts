@@ -26,9 +26,7 @@ const FIELD_DETAILS = [
 describe("Schema Generation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    if (existsSync(OUTPUT_DIR)) {
-      rmSync(OUTPUT_DIR, { recursive: true, force: true });
-    }
+    rmSync(OUTPUT_DIR, { recursive: true, force: true });
     mkdirSync(OUTPUT_DIR, { recursive: true });
     mkdirSync(join(OUTPUT_DIR, "dto"), { recursive: true });
     mkdirSync(join(OUTPUT_DIR, "entity"), { recursive: true });
@@ -36,9 +34,7 @@ describe("Schema Generation", () => {
   });
 
   afterAll(() => {
-    if (existsSync(OUTPUT_DIR)) {
-      rmSync(OUTPUT_DIR, { recursive: true, force: true });
-    }
+    rmSync(OUTPUT_DIR, { recursive: true, force: true });
   });
 
   describe("generateEnumFile", () => {
