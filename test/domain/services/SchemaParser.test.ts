@@ -1,4 +1,4 @@
-import { SchemaParser } from "../src/core/domain/services/SchemaParser";
+import { SchemaParser } from "../../../src/core/domain/services/SchemaParser";
 
 const mockSchema = `
 model User {
@@ -31,6 +31,30 @@ model Post {
   author  User    @relation(fields: [authorId], references: [id])
   authorId Int
   @@map("posts")
+}
+`;
+
+const mockInvalidSchema = `
+model User {
+  id Int @id @default(autoincrement())
+  name String
+  email String @unique
+  // missing closing bracket here
+`;
+
+const mockSchemaWithComplexTypes = `
+model Profile {
+  id      Int      @id @default(autoincrement())
+  bio     String?
+  isActive Boolean @default(true)
+  birthDate DateTime
+  ratings Float[]
+}
+`;
+
+const mockSchemaWithoutFields = `
+model EmptyModel {
+  id Int @id @default(autoincrement())
 }
 `;
 
@@ -97,6 +121,47 @@ describe("SchemaParser", () => {
           { name: "authorId", type: "Int" },
         ],
       },
+    });
+  });
+
+  it("should handle complex field types", () => {
+    const result = parser.parse(mockSchemaWithComplexTypes, false);
+
+    expect(result).toEqual({
+      tables: ["Profile"],
+      mappings: {
+        Profile: [
+          { name: "id", type: "Int" },
+          { name: "bio", type: "String?" },
+          { name: "isActive", type: "Boolean" },
+          { name: "birthDate", type: "DateTime" },
+          { name: "ratings", type: "Float[]" },
+        ],
+      },
+    });
+  });
+
+  it("should handle a model without fields", () => {
+    const result = parser.parse(mockSchemaWithoutFields, false);
+
+    expect(result).toEqual({
+      tables: ["EmptyModel"],
+      mappings: {
+        EmptyModel: [{ name: "id", type: "Int" }],
+      },
+    });
+  });
+
+  it("should throw an error for invalid schema", () => {
+    expect(() => parser.parse(mockInvalidSchema, false)).toThrow();
+  });
+
+  it("should return empty result for empty schema", () => {
+    const result = parser.parse("", false);
+
+    expect(result).toEqual({
+      tables: [],
+      mappings: {},
     });
   });
 });
