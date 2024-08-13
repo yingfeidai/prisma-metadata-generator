@@ -1,18 +1,12 @@
 import { execSync } from "child_process";
-import {
-  existsSync,
-  mkdirSync,
-  readFileSync,
-  rmdirSync,
-  writeFileSync,
-} from "fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
 
 const CLI_PATH = join(__dirname, "../../dist/cli.js");
 
 describe("CLI Integration Tests", () => {
-  const outputDir = join(tmpdir(), "generated");
+  const OUTPUT_DIR = join(tmpdir(), "generated");
 
   const runCLI = (args: string) => execSync(`node ${CLI_PATH} ${args}`);
 
@@ -22,34 +16,34 @@ describe("CLI Integration Tests", () => {
   };
 
   beforeEach(() => {
-    if (existsSync(outputDir)) {
-      rmdirSync(outputDir, { recursive: true });
+    if (existsSync(OUTPUT_DIR)) {
+      rmSync(OUTPUT_DIR, { recursive: true, force: true });
     }
-    mkdirSync(outputDir, { recursive: true });
+    mkdirSync(OUTPUT_DIR, { recursive: true });
   });
 
   afterAll(() => {
-    if (existsSync(outputDir)) {
-      rmdirSync(outputDir, { recursive: true });
+    if (existsSync(OUTPUT_DIR)) {
+      rmSync(OUTPUT_DIR, { recursive: true, force: true });
     }
   });
 
   it("should generate schema definitions using the CLI", () => {
     const schemaPath = join(__dirname, "./mockSchema.prisma");
 
-    runCLI(`--schema ${schemaPath} --output ${outputDir}`);
+    runCLI(`--schema ${schemaPath} --output ${OUTPUT_DIR}`);
 
     const enumFileContent = verifyFileExists(
-      join(outputDir, "field-enum", "prefixUserFields.ts")
+      join(OUTPUT_DIR, "field-enum", "prefixUserFields.ts")
     );
     const dtoFileContent = verifyFileExists(
-      join(outputDir, "dto", "prefixUserDto.ts")
+      join(OUTPUT_DIR, "dto", "prefixUserDto.ts")
     );
     const entityFileContent = verifyFileExists(
-      join(outputDir, "entity", "prefixUserEntity.ts")
+      join(OUTPUT_DIR, "entity", "prefixUserEntity.ts")
     );
     const allTablesFileContent = verifyFileExists(
-      join(outputDir, "field-enum", "prefixTables.ts")
+      join(OUTPUT_DIR, "field-enum", "prefixTables.ts")
     );
 
     expect(enumFileContent).toContain("export const prefixUserFields");
@@ -70,7 +64,7 @@ describe("CLI Integration Tests", () => {
   });
 
   it("should fail if the schema option is missing", () => {
-    expect(() => runCLI(`--output ${outputDir}`)).toThrowError(
+    expect(() => runCLI(`--output ${OUTPUT_DIR}`)).toThrowError(
       /Schema option is required/
     );
   });
@@ -85,7 +79,7 @@ describe("CLI Integration Tests", () => {
   it("should fail if the schema path is invalid", () => {
     const schemaPath = join(__dirname, "./invalidSchema.prisma");
     expect(() =>
-      runCLI(`--schema ${schemaPath} --output ${outputDir}`)
+      runCLI(`--schema ${schemaPath} --output ${OUTPUT_DIR}`)
     ).toThrowError(/Schema file not found/);
   });
 
@@ -98,16 +92,16 @@ describe("CLI Integration Tests", () => {
 
   it("should fail if the output directory is not writable", () => {
     const schemaPath = join(__dirname, "./mockSchema.prisma");
-    const unwritableOutputDir = "/root/generated";
+    const unwritableOUTPUT_DIR = "/root/generated";
     expect(() =>
-      runCLI(`--schema ${schemaPath} --output ${unwritableOutputDir}`)
+      runCLI(`--schema ${schemaPath} --output ${unwritableOUTPUT_DIR}`)
     ).toThrowError(/Permission denied/);
   });
 
   it("should fail if an invalid option value is provided", () => {
     const schemaPath = join(__dirname, "./mockSchema.prisma");
     expect(() =>
-      runCLI(`--schema ${schemaPath} --output ${outputDir} --invalidOption`)
+      runCLI(`--schema ${schemaPath} --output ${OUTPUT_DIR} --invalidOption`)
     ).toThrowError(/Unknown option/);
   });
 
@@ -133,19 +127,19 @@ describe("CLI Integration Tests", () => {
     `;
     writeFileSync(schemaWithCommentsPath, schemaContent);
 
-    runCLI(`--schema ${schemaWithCommentsPath} --output ${outputDir}`);
+    runCLI(`--schema ${schemaWithCommentsPath} --output ${OUTPUT_DIR}`);
 
     const enumFileContent = verifyFileExists(
-      join(outputDir, "field-enum", "prefixUserFields.ts")
+      join(OUTPUT_DIR, "field-enum", "prefixUserFields.ts")
     );
     const dtoFileContent = verifyFileExists(
-      join(outputDir, "dto", "prefixUserDto.ts")
+      join(OUTPUT_DIR, "dto", "prefixUserDto.ts")
     );
     const entityFileContent = verifyFileExists(
-      join(outputDir, "entity", "prefixUserEntity.ts")
+      join(OUTPUT_DIR, "entity", "prefixUserEntity.ts")
     );
     const allTablesFileContent = verifyFileExists(
-      join(outputDir, "field-enum", "prefixTables.ts")
+      join(OUTPUT_DIR, "field-enum", "prefixTables.ts")
     );
 
     expect(enumFileContent).toContain("export const prefixUserFields");

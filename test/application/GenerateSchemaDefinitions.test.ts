@@ -1,10 +1,4 @@
-import {
-  writeFileSync,
-  readFileSync,
-  existsSync,
-  mkdirSync,
-  rmdirSync,
-} from "fs";
+import { writeFileSync, readFileSync, existsSync, mkdirSync, rmSync } from "fs";
 import { join } from "path";
 import {
   generateAllTablesFile,
@@ -33,7 +27,7 @@ describe("Schema Generation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     if (existsSync(OUTPUT_DIR)) {
-      rmdirSync(OUTPUT_DIR, { recursive: true });
+      rmSync(OUTPUT_DIR, { recursive: true, force: true });
     }
     mkdirSync(OUTPUT_DIR, { recursive: true });
     mkdirSync(join(OUTPUT_DIR, "dto"), { recursive: true });
@@ -43,7 +37,7 @@ describe("Schema Generation", () => {
 
   afterAll(() => {
     if (existsSync(OUTPUT_DIR)) {
-      rmdirSync(OUTPUT_DIR, { recursive: true });
+      rmSync(OUTPUT_DIR, { recursive: true, force: true });
     }
   });
 
