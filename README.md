@@ -44,7 +44,7 @@ You can configure the generator both through your schema.prisma file and via the
 - output: The base output directory for generated files.
 - useConst: Use const for enum definitions (true or false).
 - useMapping: Use @map and @@map annotations for field names (true or false).
-- fileNaming: The file naming convention (camelCase or snake_case). Default is camelCase.
+- fileNaming: The file naming convention (camelCase or kebab-case). Default is camelCase.
 - dtoPrefix: Prefix for DTO files.
 - entityPrefix: Prefix for Entity files.
 - fieldEnumPrefix: Prefix for Field Enum files.
@@ -59,33 +59,34 @@ You can configure the generator both through your schema.prisma file and via the
 
 ### CLI Options
 
-- `-s, --schema <path>`: Path to your Prisma schema file
-- `-o, --output <path>`: Output directory for generated files. Default is ./generated
-- `-c, --const`: Use const for enum definitions
-- `--use-mapping`: Use @map and @@map annotations for field names
-- `-dto-prefix <prefix>`: Prefix for DTO files
-- `--entity-prefix <prefix>`: Prefix for Entity files
-- `--field-enum-prefix <prefix>`: Prefix for Field Enum files
-- `--dto-suffix <suffix>`: Suffix for DTO files
-- `--entity-suffix <suffix>`: Suffix for Entity files
-- `--field-enum-suffix <suffix>`: Suffix for Field Enum files
-- `--dto-output <path>`: Output directory for DTO files
-- `--entity-output <path>`: Output directory for Entity files
-- `--field-enum-output <path>`: Output directory for Field Enum files
-- `--dto-as-class <true|false>`: Generate DTOs as classes or const objects. Default is true
-- `--entity-as-class <true|false>`: Generate Entities as classes or const objects. Default is true
+- `-s, --schema <path>`: Path to your Prisma schema file.
+- `-o, --output <path>`: Output directory for generated files. Default is ./generated.
+- `-c, --const`: Use const for enum definitions.
+- `--use-mapping`: Use @map and @@map annotations for field names.
+- `--dto-prefix <prefix>`: Prefix for DTO files.
+- `--entity-prefix <prefix>`: Prefix for Entity files.
+- `--field-enum-prefix <prefix>`: Prefix for Field Enum files.
+- `--dto-suffix <suffix>`: Suffix for DTO files.
+- `--entity-suffix <suffix>`: Suffix for Entity files.
+- `--field-enum-suffix <suffix>`: Suffix for Field Enum files.
+- `--dto-output <path>`: Output directory for DTO files.
+- `--entity-output <path>`: Output directory for Entity files.
+- `--field-enum-output <path>`: Output directory for Field Enum files.
+- `--dto-as-class <true|false>`: Generate DTOs as classes or const objects. Default is true.
+- `--entity-as-class <true|false>`: Generate Entities as classes or const objects. Default is true.
+
 #### Examples
 
 ##### Generate enum files from a Prisma schema:
 
 ```bash
-prisma-schema-enum-generator -s path/to/schema.prisma -o path/to/output
+prisma-metadata-generator -s path/to/schema.prisma -o path/to/output
 ```
 
 ##### Generate enums with database table names and using const:
 
 ```bash
-prisma-schema-enum-generator -s path/to/schema.prisma -o path/to/output --db-name --const
+prisma-metadata-generator -s path/to/schema.prisma -o path/to/output --db-name --const
 ```
 
 ### Generated Files
@@ -101,7 +102,7 @@ prisma-schema-enum-generator -s path/to/schema.prisma -o path/to/output --db-nam
 
 ```bash
  git clone https://github.com/your/repo.git
- cd prisma-schema-enum-generator
+ cd prisma-metadata-generator
 ```
 
 2. Install dependencies:
