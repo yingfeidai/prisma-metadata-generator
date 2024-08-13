@@ -1,5 +1,5 @@
 import { writeFileSync } from "fs";
-import { join } from "path";
+import { errorHandler } from "../domain/services/ErrorHandler";
 import { SchemaParser } from "../domain/services/SchemaParser";
 
 export const generateEnumFile = (
@@ -23,10 +23,16 @@ export const generateEnumFile = (
   try {
     writeFileSync(outputPath, enumContent);
   } catch (error) {
-    console.error(`Failed to write enum file: ${error.message}`);
+    errorHandler(error, "Failed to write enum file");
   }
 };
 
+export const generateAllTablesFile = (
+  tables: string[],
+  useConst: boolean,
+  outputPath: string,
+  prefix: string
+): void => {
   const tableDefinitions = tables
     .map((table) => `${table.toUpperCase()}: "${table}"`)
     .join(",\n  ");
@@ -41,10 +47,11 @@ export const generateEnumFile = (
   try {
     writeFileSync(outputPath, tablesContent);
   } catch (error) {
-    console.error(`Failed to write all tables file: ${error.message}`);
+    errorHandler(error, "Failed to write all tables file");
   }
+};
 
-const formatFileName = (name: string, style: string): string => {
+export const formatFileName = (name: string, style: string): string => {
   switch (style) {
     case "kebab-case":
       return name.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
@@ -74,7 +81,11 @@ export const generateDtoFile = (
         .map((field) => `${field.name}: undefined as ${field.type},`)
         .join("\n  ")}\n} as const;`;
 
-  writeFileSync(outputPath, dtoContent);
+  try {
+    writeFileSync(outputPath, dtoContent);
+  } catch (error) {
+    errorHandler(error, "Failed to write DTO file");
+  }
 };
 
 export const generateEntityFile = (
@@ -101,7 +112,7 @@ export const generateEntityFile = (
   try {
     writeFileSync(outputPath, entityContent);
   } catch (error) {
-    console.error(`Failed to write entity file: ${error.message}`);
+    errorHandler(error, "Failed to write entity file");
   }
 };
 
@@ -141,17 +152,14 @@ export const generateSchemaDefinitions = (
         table,
         fieldNames,
         useConst,
-        join(
-          outputDirs.fieldEnum ?? join(outputDir, "field-enum"),
-          `${fileName}.ts`
-        ),
+        `${outputDirs.fieldEnum ?? `${outputDir}/field-enum`}/${fileName}.ts`,
         prefixes.fieldEnum
       );
 
       generateDtoFile(
         table,
         fields,
-        join(outputDirs.dto ?? join(outputDir, "dto"), `${dtoFileName}.ts`),
+        `${outputDirs.dto ?? `${outputDir}/dto`}/${dtoFileName}.ts`,
         prefixes.dto,
         suffixes.dto,
         dtoAsClass
@@ -160,10 +168,7 @@ export const generateSchemaDefinitions = (
       generateEntityFile(
         table,
         fields,
-        join(
-          outputDirs.entity ?? join(outputDir, "entity"),
-          `${entityFileName}.ts`
-        ),
+        `${outputDirs.entity ?? `${outputDir}/entity`}/${entityFileName}.ts`,
         prefixes.entity,
         suffixes.entity,
         entityAsClass
@@ -177,13 +182,12 @@ export const generateSchemaDefinitions = (
     generateAllTablesFile(
       tables,
       useConst,
-      join(
-        outputDirs.fieldEnum ?? join(outputDir, "field-enum"),
-        `${allTablesFileName}.ts`
-      ),
+      `${
+        outputDirs.fieldEnum ?? `${outputDir}/field-enum`
+      }/${allTablesFileName}.ts`,
       prefixes.fieldEnum
     );
   } catch (error) {
-    console.error("Error generating schema definitions:", error);
+    errorHandler(error, "Error generating schema definitions");
   }
 };

@@ -7,111 +7,64 @@ const program = new Command();
 program
   .option("-s, --schema <path>", "Path to Prisma schema file")
   .option("-o, --output <path>", "Output directory", "./generated")
-  .option("-c, --const", "Use const for field definitions", false)
+  .option("-c, --const", "Use const enums instead of regular enums", false)
+  .option("-m, --mapping", "Use field mapping annotations", false)
   .option(
-    "-m, --use-mapping",
-    "Use @map and @@map annotations for field names",
+    "--file-naming <style>",
+    "File naming style (camelCase|kebab-case)",
+    "camelCase"
+  )
+  .option("--prefix-dto <prefix>", "Prefix for DTO files", "")
+  .option("--suffix-dto <suffix>", "Suffix for DTO files", "")
+  .option("--prefix-entity <prefix>", "Prefix for Entity files", "")
+  .option("--suffix-entity <suffix>", "Suffix for Entity files", "")
+  .option("--prefix-field-enum <prefix>", "Prefix for Field Enum files", "")
+  .option("--suffix-field-enum <suffix>", "Suffix for Field Enum files", "")
+  .option("--dto-dir <path>", "Output directory for DTO files")
+  .option("--entity-dir <path>", "Output directory for Entity files")
+  .option("--field-enum-dir <path>", "Output directory for Field Enum files")
+  .option(
+    "--dto-as-class",
+    "Generate DTOs as classes instead of objects",
     false
   )
   .option(
-    "-f, --file-naming <style>",
-    "File naming style: camelCase, kebab-case",
-    "camelCase"
+    "--entity-as-class",
+    "Generate Entities as classes instead of objects",
+    false
   )
-  .option("--dto-output <path>", "Output directory for DTO files")
-  .option("--entity-output <path>", "Output directory for entity files")
-  .option("--field-enum-output <path>", "Output directory for field enum files")
-  .option("--dto-prefix <prefix>", "Prefix for DTO class names", "")
-  .option("--entity-prefix <prefix>", "Prefix for entity class names", "")
-  .option("--field-enum-prefix <prefix>", "Prefix for field enum names", "")
-  .option("--dto-suffix <suffix>", "Suffix for DTO class names", "Dto")
-  .option("--entity-suffix <suffix>", "Suffix for entity class names", "Entity")
-  .option(
-    "--field-enum-suffix <suffix>",
-    "Suffix for field enum names",
-    "Fields"
-  )
-  .option("--dto-as-class", "Generate DTOs as classes", true)
-  .option("--entity-as-class", "Generate entities as classes", true)
-  .action((options: {
-    schema: string;
-    output: string;
-    const: boolean;
-    useMapping: boolean;
-    fileNaming: string;
-    dtoOutput?: string;
-    entityOutput?: string;
-    fieldEnumOutput?: string;
-    dtoPrefix: string;
-    entityPrefix: string;
-    fieldEnumPrefix: string;
-    dtoSuffix: string;
-    entitySuffix: string;
-    fieldEnumSuffix: string;
-    dtoAsClass: boolean;
-    entityAsClass: boolean;
-  }) => {
-  .action((options: {
-    schema: string;
-    output: string;
-    const: boolean;
-    useMapping: boolean;
-    fileNaming: string;
-    dtoOutput?: string;
-    entityOutput?: string;
-    fieldEnumOutput?: string;
-    dtoPrefix: string;
-    entityPrefix: string;
-    fieldEnumPrefix: string;
-    dtoSuffix: string;
-    entitySuffix: string;
-    fieldEnumSuffix: string;
-    dtoAsClass: boolean;
-    entityAsClass: boolean;
-  }) => {
-    const {
-      schema,
-      output,
-      const: useConst,
-      useMapping,
-      fileNaming,
-      dtoOutput,
-      entityOutput,
-      fieldEnumOutput,
-      dtoPrefix,
-      entityPrefix,
-      fieldEnumPrefix,
-      dtoSuffix,
-      entitySuffix,
-      fieldEnumSuffix,
-      dtoAsClass,
-      entityAsClass,
-    } = options;
+  .parse(process.argv);
 
-    if (!schema) {
-      console.error("Please provide the path to the Prisma schema file.");
-      process.exit(1);
-    }
+const options = program.opts();
 
-    const validFileNamingStyles = ["camelCase", "kebab-case"];
-    if (!validFileNamingStyles.includes(fileNaming)) {
-      console.error(`Invalid file naming style. Choose either 'camelCase' or 'kebab-case'.`);
-      process.exit(1);
-    }
+if (!options.schema) {
+  console.error("Schema file path is required.");
+  process.exit(1);
+}
 
-    const schemaContent = readFileSync(schema, "utf-8");
-    generateSchemaDefinitions(
-      schemaContent,
-      output,
-      useConst,
-      useMapping,
-      fileNaming,
-      { dto: dtoPrefix, entity: entityPrefix, fieldEnum: fieldEnumPrefix },
-      { dto: dtoSuffix, entity: entitySuffix, fieldEnum: fieldEnumSuffix },
-      { dto: dtoOutput, entity: entityOutput, fieldEnum: fieldEnumOutput },
-      dtoAsClass,
-      entityAsClass
-    );
-  });
+const schemaContent = readFileSync(options.schema, "utf-8");
 
-program.parse(process.argv);
+generateSchemaDefinitions(
+  schemaContent,
+  options.output,
+  options.const,
+  options.mapping,
+  options.fileNaming,
+  {
+    dto: options.prefixDto,
+    entity: options.prefixEntity,
+    fieldEnum: options.prefixFieldEnum,
+  },
+  {
+    dto: options.suffixDto,
+    entity: options.suffixEntity,
+    fieldEnum: options.suffixFieldEnum,
+  },
+  {
+    dto: options.dtoDir,
+    entity: options.entityDir,
+    fieldEnum: options.fieldEnumDir,
+  },
+  options.dtoAsClass,
+  options.entityAsClass
+);
