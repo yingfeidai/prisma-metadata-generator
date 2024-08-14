@@ -9,7 +9,10 @@ export class SchemaParser {
     const mappings: Record<string, { name: string; type: string }[]> = {};
     let match: RegExpExecArray | null;
 
-    while ((match = this.tablePattern.exec(schema)) !== null) {
+    match = this.tablePattern.exec(schema);
+    while (match !== null) {
+      // existing code
+      match = this.tablePattern.exec(schema);
       const tableName = match[1];
       const fields = match[2]
         .split("\n")
